@@ -3,10 +3,21 @@
   "id": "randommod",
   "version": "${version}",
   "name": "Random Mod",
-  "description": "",
-  "authors": [],
-  "contact": {},
-  "license": "GPL-3.0",
+  "description": "Adds random stuff",
+  "authors": [
+    {
+      "name": "eclipseisoffline",
+      "contact": {
+        "homepage": "https://github.com/eclipseisoffline"
+      }
+    }
+  ],
+  "contact": {
+    "homepage": "https://github.com/eclipseisoffline/randommod",
+    "issues": "https://github.com/eclipseisoffline/randommod/issues",
+    "sources": "https://github.com/eclipseisoffline/randommod"
+  },
+  "license": "GPLv3",
   "icon": "assets/randommod/icon.png",
   "environment": "*",
   "entrypoints": {

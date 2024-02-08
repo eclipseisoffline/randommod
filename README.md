@@ -8,3 +8,7 @@ Modifications:
 - Makes creepers unable to destroy blocks (their explosions still do damage)
 - Farmland no longer is destroyed when jumping on it
 - Food items have random body part names
+
+## License
+
+This mod is licensed under GNU GPLv3.
