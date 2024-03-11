@@ -15,12 +15,16 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(FoodComponents.class)
 public class FoodComponentsMixin {
 
-    @Shadow @Final @Mutable public static FoodComponent GLOW_BERRIES;
+    @Shadow
+    @Final
+    @Mutable
+    public static FoodComponent GLOW_BERRIES;
 
     @Inject(method = "<clinit>", at = @At("TAIL"))
     private static void modifyGlowBerries(CallbackInfo callbackInfo) {
         GLOW_BERRIES = new FoodComponent.Builder().hunger(2)
                 .saturationModifier(0.1f).statusEffect(
-                        new StatusEffectInstance(StatusEffects.GLOWING, 300, 0, false, false, true), 1.0F).build();
+                        new StatusEffectInstance(StatusEffects.GLOWING, 300, 0, false, false, true),
+                        1.0F).build();
     }
 }

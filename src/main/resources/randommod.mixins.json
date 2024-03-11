@@ -6,6 +6,10 @@
   "mixins": [
     "FarmlandBlockMixin",
     "FoodComponentsMixin",
+    "GoatHornItemMixin",
+    "PhantomEntityMixin",
+    "ServerPlayNetworkHandlerMixin",
+    "WanderingTraderManagerMixin",
     "WorldMixin"
   ],
   "client": [],

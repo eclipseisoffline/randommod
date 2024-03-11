@@ -26,6 +26,7 @@ public class WorldMixin {
         if (entity instanceof CreeperEntity) {
             behavior = new CreeperExplosionBehavior(entity);
         }
-        return instance.createExplosion(entity, damageSource, behavior, x, y, z, power, createFire, explosionSourceType, particle, emitterParticle, soundEvent);
+        return instance.createExplosion(entity, damageSource, behavior, x, y, z, power, createFire,
+                explosionSourceType, particle, emitterParticle, soundEvent);
     }
 }

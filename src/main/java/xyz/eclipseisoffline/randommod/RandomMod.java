@@ -1,17 +1,12 @@
 package xyz.eclipseisoffline.randommod;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Random;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.fabricmc.fabric.api.event.lifecycle.v1.ServerTickEvents;
+import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.network.packet.s2c.play.GameStateChangeS2CPacket;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.network.ServerPlayerEntity;
@@ -36,14 +31,17 @@ public class RandomMod implements ModInitializer {
             "Myosattelite cells", "Tendon cells", "Cardiac muscle cells", "Fibrocytes",
             "Endothelial cells", "Mesangial cells", "Juxtaglomerular cells", "Macula densa cells",
             "Telocytes", "Podocytes", "Kidney proximal tubule brush border cells",
-            "Lymphoids", "Myeloids", "Endothelial progenitor cells", "Endothelial colony forming cells",
-            "Endothelial stem cells", "Angioblasts", "Pericytes", "Mural cells", "Mesothelial cells",
+            "Lymphoids", "Myeloids", "Endothelial progenitor cells",
+            "Endothelial colony forming cells",
+            "Endothelial stem cells", "Angioblasts", "Pericytes", "Mural cells",
+            "Mesothelial cells",
             "Pneumocytes", "Club cells", "Goblet cells", "Pulmonary neuroendocrine cells",
             "Enteroendocrine cells", "G cells", "Delta cells", "Enterochromaffin-like cells",
             "Gastric chief cells", "Parietal cells", "Foveolar cells", "S cells",
             "Cholecystokinins", "Paneth cells", "Tuft cells", "Microfold cells", "Hepatocytes",
             "Hepatic stellate cells", "Centroacinar cells", "Pancreatic stellate cells",
-            "Alpha cells", "Beta cells", "Epsilon cells", "Follicular cells", "Parafollicular cells",
+            "Alpha cells", "Beta cells", "Epsilon cells", "Follicular cells",
+            "Parafollicular cells",
             "Parathyroid chief cells", "Oxyphil cells", "Urothelial cells"
     };
 
@@ -52,32 +50,69 @@ public class RandomMod implements ModInitializer {
         System.out.println("Registered " + BODY_PARTS.length + " body parts");
         Random random = new Random();
 
-        CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> dispatcher.register(
-                CommandManager.literal("head").executes(context -> {
-                    if (!context.getSource().isExecutedByPlayer()) {
-                        return 1;
-                    }
+        CommandRegistrationCallback.EVENT.register(((dispatcher, registryAccess, environment) -> {
+            dispatcher.register(
+                    CommandManager.literal("head").executes(context -> {
+                        if (!context.getSource().isExecutedByPlayer()) {
+                            return 1;
+                        }
 
-                    ServerPlayerEntity player = context.getSource().getPlayer();
-                    assert player != null;
-                    ItemStack head = player.getEquippedStack(EquipmentSlot.HEAD);
-                    if (!head.isEmpty()) {
-                        context.getSource().sendError(Text.of("Empty your head slot first!"));
-                        return 1;
-                    }
+                        ServerPlayerEntity player = context.getSource().getPlayer();
+                        assert player != null;
+                        ItemStack head = player.getEquippedStack(EquipmentSlot.HEAD);
+                        if (!head.isEmpty()) {
+                            context.getSource().sendError(Text.of("Empty your head slot first!"));
+                            return 1;
+                        }
 
-                    if (player.getStackInHand(Hand.MAIN_HAND).isEmpty()) {
-                        context.getSource().sendError(Text.of("Select an item by holding it!"));
-                        return 1;
-                    }
+                        if (player.getStackInHand(Hand.MAIN_HAND).isEmpty()) {
+                            context.getSource().sendError(Text.of("Select an item by holding it!"));
+                            return 1;
+                        }
 
-                    player.equipStack(EquipmentSlot.HEAD, player.getStackInHand(Hand.MAIN_HAND).copyWithCount(1));
-                    if (!player.getAbilities().creativeMode) {
-                        player.getStackInHand(Hand.MAIN_HAND).decrement(1);
-                    }
-                    return 0;
-                }))));
+                        player.equipStack(EquipmentSlot.HEAD,
+                                player.getStackInHand(Hand.MAIN_HAND).copyWithCount(1));
+                        if (!player.getAbilities().creativeMode) {
+                            player.getStackInHand(Hand.MAIN_HAND).decrement(1);
+                        }
+                        return 0;
+                    })
+            );
+            dispatcher.register(
+                    CommandManager.literal("demo")
+                            .requires(source -> source.hasPermissionLevel(2))
+                            .then(CommandManager.argument("player", EntityArgumentType.player())
+                                    .then(CommandManager.literal("end")
+                                            .executes(context -> {
+                                                ServerPlayerEntity player = EntityArgumentType.getPlayer(
+                                                        context, "player");
+                                                player.networkHandler.sendPacket(
+                                                        new GameStateChangeS2CPacket(
+                                                                GameStateChangeS2CPacket.DEMO_MESSAGE_SHOWN,
+                                                                104));
+                                                context.getSource().sendFeedback(() -> Text.literal(
+                                                                "Showing demo end screen to ")
+                                                        .append(player.getDisplayName()), true);
+                                                return 0;
+                                            })
+                                    )
+                                    .executes(context -> {
+                                        ServerPlayerEntity player = EntityArgumentType.getPlayer(
+                                                context, "player");
+                                        player.networkHandler.sendPacket(
+                                                new GameStateChangeS2CPacket(
+                                                        GameStateChangeS2CPacket.DEMO_MESSAGE_SHOWN,
+                                                        0));
+                                        context.getSource().sendFeedback(
+                                                () -> Text.literal("Showing demo screen to ")
+                                                        .append(player.getDisplayName()), true);
+                                        return 0;
+                                    })
+                            )
+            );
+        }));
 
+        /* disabled to increase performance
         ServerTickEvents.END_SERVER_TICK.register((server -> {
             List<ServerPlayerEntity> playersOnline = server.getPlayerManager().getPlayerList();
 
@@ -129,6 +164,7 @@ public class RandomMod implements ModInitializer {
                 }
             }
         }));
+        */
     }
 
     private String getRandomFoodName(MinecraftServer server, Random random) {
