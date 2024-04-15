@@ -1,8 +1,5 @@
 package xyz.eclipseisoffline.randommod.mixin;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.network.ClientConnection;
 import net.minecraft.network.listener.ServerPlayPacketListener;
@@ -38,13 +35,37 @@ public abstract class ServerPlayNetworkHandlerMixin extends ServerCommonNetworkH
         Text chat = instance.getContent();
         if (player.hasStatusEffect(StatusEffects.NAUSEA)) {
             String message = chat.getString();
-            List<String> words = new ArrayList<>(List.of(message.split(" ")));
-            Collections.reverse(words);
-            List<String> newWords = new ArrayList<>();
-            for (String word : words) {
-                newWords.add(new StringBuilder(word).reverse().toString());
+            int words = message.split(" ").length;
+
+            char[] messageChars = message.toCharArray();
+            int messageLength = messageChars.length;
+
+            for (int i = 0; i < words * 0.4; i++) {
+                int firstPos = player.getWorld().random.nextInt(messageLength);
+                int secondPos = player.getWorld().random.nextInt(messageLength);
+                if (firstPos == secondPos) {
+                    continue;
+                }
+                char firstChar = messageChars[firstPos];
+                char secondChar = messageChars[secondPos];
+                if (firstChar == ' ' || secondChar == ' ') {
+                    continue;
+                }
+
+                messageChars[firstPos] = secondChar;
+                messageChars[secondPos] = firstChar;
             }
-            chat = Text.of(String.join(" ", newWords));
+
+            StringBuilder newMessage = new StringBuilder();
+            for (char c : messageChars) {
+                if (player.getWorld().random.nextInt(10) < 2) {
+                    newMessage.append(String.valueOf(c).toUpperCase());
+                } else {
+                    newMessage.append(c);
+                }
+            }
+
+            chat = Text.of(newMessage.toString());
         }
         return chat;
     }

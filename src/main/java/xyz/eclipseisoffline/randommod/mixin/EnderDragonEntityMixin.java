@@ -20,7 +20,8 @@ public abstract class EnderDragonEntityMixin extends MobEntity implements Monste
     }
 
     @Inject(method = "destroyBlocks", at = @At("HEAD"), cancellable = true)
-    public void cancelDestroyBlocks(Box box, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
+    public void cancelDestroyBlocks(Box box,
+            CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
         callbackInfoReturnable.setReturnValue(true);
     }
 }

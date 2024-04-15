@@ -32,6 +32,7 @@ public abstract class EndCrystalEntityMixin extends Entity {
             }
         }
 
-        return instance.createExplosion(entity, damageSource, explosionBehavior, x, y, z, power, createFire, explosionSourceType);
+        return instance.createExplosion(entity, damageSource, explosionBehavior, x, y, z, power,
+                createFire, explosionSourceType);
     }
 }

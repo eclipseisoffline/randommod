@@ -11,7 +11,8 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(TridentEntity.class)
 public abstract class TridentEntityMixin extends PersistentProjectileEntity {
 
-    @Shadow private boolean dealtDamage;
+    @Shadow
+    private boolean dealtDamage;
 
     protected TridentEntityMixin(
             EntityType<? extends PersistentProjectileEntity> type,

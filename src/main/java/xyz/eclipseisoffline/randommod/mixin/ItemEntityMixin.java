@@ -6,7 +6,6 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.Ownable;
 import net.minecraft.item.ItemStack;
-import net.minecraft.server.PlayerManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
@@ -16,9 +15,11 @@ import org.spongepowered.asm.mixin.Shadow;
 @Mixin(ItemEntity.class)
 public abstract class ItemEntityMixin extends Entity implements Ownable {
 
-    @Shadow public abstract ItemStack getStack();
+    @Shadow
+    public abstract ItemStack getStack();
 
-    @Shadow private @Nullable UUID throwerUuid;
+    @Shadow
+    private @Nullable UUID throwerUuid;
 
     public ItemEntityMixin(EntityType<?> type, World world) {
         super(type, world);
@@ -28,7 +29,8 @@ public abstract class ItemEntityMixin extends Entity implements Ownable {
     protected void tickInVoid() {
         if (!getEntityWorld().isClient && throwerUuid != null && getStack().hasEnchantments()) {
             assert getEntityWorld().getServer() != null;
-            ServerPlayerEntity player = getEntityWorld().getServer().getPlayerManager().getPlayer(throwerUuid);
+            ServerPlayerEntity player = getEntityWorld().getServer().getPlayerManager()
+                    .getPlayer(throwerUuid);
             if (player != null) {
                 setPosition(player.getPos());
             }

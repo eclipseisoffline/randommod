@@ -24,7 +24,8 @@ public abstract class CreeperEntityMixin extends HostileEntity implements SkinOv
     }
 
     @Redirect(method = "explode", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;createExplosion(Lnet/minecraft/entity/Entity;DDDFLnet/minecraft/world/World$ExplosionSourceType;)Lnet/minecraft/world/explosion/Explosion;"))
-    public Explosion setExplosionBehavior(World instance, Entity entity, double x, double y, double z,
+    public Explosion setExplosionBehavior(World instance, Entity entity, double x, double y,
+            double z,
             float power, ExplosionSourceType explosionSourceType) {
         return instance.createExplosion(entity, Explosion.createDamageSource(instance, entity),
                 new NoDestroyExplosionBehavior(entity), x, y, z,

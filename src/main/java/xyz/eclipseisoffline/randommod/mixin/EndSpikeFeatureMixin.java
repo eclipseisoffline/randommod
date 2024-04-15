@@ -33,5 +33,6 @@ public abstract class EndSpikeFeatureMixin extends Feature<EndSpikeFeatureConfig
 
     @Redirect(method = "generateSpike", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/gen/feature/EndSpikeFeature;setBlockState(Lnet/minecraft/world/ModifiableWorld;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)V", ordinal = 1))
     public void cancelSetToAir(EndSpikeFeature instance, ModifiableWorld modifiableWorld,
-            BlockPos blockPos, BlockState blockState) {}
+            BlockPos blockPos, BlockState blockState) {
+    }
 }

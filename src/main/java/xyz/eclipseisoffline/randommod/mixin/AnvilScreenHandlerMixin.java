@@ -26,7 +26,9 @@ public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
     @Unique
     private static final int LEVEL_LIMIT = 1000;
 
-    @Shadow @Final private Property levelCost;
+    @Shadow
+    @Final
+    private Property levelCost;
 
     public AnvilScreenHandlerMixin(
             @Nullable ScreenHandlerType<?> type,
@@ -36,7 +38,8 @@ public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
     }
 
     @Redirect(method = "updateResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/Property;set(I)V", ordinal = 6))
-    public void cancelSetLevelCost(Property instance, int i) {}
+    public void cancelSetLevelCost(Property instance, int i) {
+    }
 
     @Redirect(method = "updateResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/Property;get()I", ordinal = 1))
     public int modifyLevelCostLimit(Property instance) {
@@ -52,16 +55,19 @@ public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
         super.onContentChanged(inventory);
         if (player instanceof ServerPlayerEntity) {
             if (levelCost.get() >= LEVEL_LIMIT) {
-                ((ServerPlayerEntity) player).networkHandler.sendPacket(new PlayerAbilitiesS2CPacket(player.getAbilities()));
+                ((ServerPlayerEntity) player).networkHandler.sendPacket(
+                        new PlayerAbilitiesS2CPacket(player.getAbilities()));
             } else if (levelCost.get() >= 40) {
                 NbtCompound abilityCompound = new NbtCompound();
                 player.getAbilities().writeNbt(abilityCompound);
                 PlayerAbilities tempAbilities = new PlayerAbilities();
                 tempAbilities.readNbt(abilityCompound);
                 tempAbilities.creativeMode = true;
-                ((ServerPlayerEntity) player).networkHandler.sendPacket(new PlayerAbilitiesS2CPacket(tempAbilities));
+                ((ServerPlayerEntity) player).networkHandler.sendPacket(
+                        new PlayerAbilitiesS2CPacket(tempAbilities));
             } else {
-                ((ServerPlayerEntity) player).networkHandler.sendPacket(new PlayerAbilitiesS2CPacket(player.getAbilities()));
+                ((ServerPlayerEntity) player).networkHandler.sendPacket(
+                        new PlayerAbilitiesS2CPacket(player.getAbilities()));
             }
         }
     }
@@ -70,7 +76,8 @@ public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
     public void onClosed(PlayerEntity player) {
         super.onClosed(player);
         if (player instanceof ServerPlayerEntity) {
-            ((ServerPlayerEntity) player).networkHandler.sendPacket(new PlayerAbilitiesS2CPacket(player.getAbilities()));
+            ((ServerPlayerEntity) player).networkHandler.sendPacket(
+                    new PlayerAbilitiesS2CPacket(player.getAbilities()));
         }
     }
 }

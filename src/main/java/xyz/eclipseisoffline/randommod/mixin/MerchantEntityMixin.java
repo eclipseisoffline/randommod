@@ -14,7 +14,8 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(MerchantEntity.class)
-public abstract class MerchantEntityMixin extends PassiveEntity implements InventoryOwner, Npc, Merchant {
+public abstract class MerchantEntityMixin extends PassiveEntity implements InventoryOwner, Npc,
+        Merchant {
 
     protected MerchantEntityMixin(EntityType<? extends PassiveEntity> entityType,
             World world) {
@@ -22,7 +23,8 @@ public abstract class MerchantEntityMixin extends PassiveEntity implements Inven
     }
 
     @Inject(method = "canBeLeashedBy", at = @At("HEAD"), cancellable = true)
-    public void canLeash(PlayerEntity player, CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
+    public void canLeash(PlayerEntity player,
+            CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
         callbackInfoReturnable.setReturnValue(true);
     }
 }

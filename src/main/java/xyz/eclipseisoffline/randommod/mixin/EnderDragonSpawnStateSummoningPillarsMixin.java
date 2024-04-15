@@ -12,7 +12,8 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 public abstract class EnderDragonSpawnStateSummoningPillarsMixin {
 
     @Redirect(method = "run", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/world/ServerWorld;createExplosion(Lnet/minecraft/entity/Entity;DDDFLnet/minecraft/world/World$ExplosionSourceType;)Lnet/minecraft/world/explosion/Explosion;"))
-    public Explosion cancelExplosion(ServerWorld instance, Entity entity, double x, double y, double z,
+    public Explosion cancelExplosion(ServerWorld instance, Entity entity, double x, double y,
+            double z,
             float power, ExplosionSourceType explosionSourceType) {
         // TODO - use no destroy explosion behaviour instead?
         return null;

@@ -16,7 +16,6 @@
     "ItemEntityMixin",
     "MendingEnchantmentMixin",
     "MerchantEntityMixin",
-    "PhantomEntityMixin",
     "ProtectionEnchantmentMixin",
     "ServerPlayNetworkHandlerMixin",
     "TridentEntityMixin",
