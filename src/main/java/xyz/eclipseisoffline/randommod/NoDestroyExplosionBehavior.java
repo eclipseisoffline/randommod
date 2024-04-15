@@ -7,9 +7,9 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.explosion.EntityExplosionBehavior;
 import net.minecraft.world.explosion.Explosion;
 
-public class CreeperExplosionBehavior extends EntityExplosionBehavior {
+public class NoDestroyExplosionBehavior extends EntityExplosionBehavior {
 
-    public CreeperExplosionBehavior(Entity entity) {
+    public NoDestroyExplosionBehavior(Entity entity) {
         super(entity);
     }
 

@@ -12,9 +12,9 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 @Mixin(WanderingTraderManager.class)
 public class WanderingTraderManagerMixin {
 
-    // 1 minute instead of 20
+    // 3 minute instead of 20
     @Unique
-    private static final int MODIFIED_SPAWN_DELAY = 60 * 20;
+    private static final int MODIFIED_SPAWN_DELAY = 180 * 20;
     @Shadow
     @Final
     public static int DEFAULT_SPAWN_DELAY;

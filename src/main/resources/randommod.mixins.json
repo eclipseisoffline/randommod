@@ -4,13 +4,24 @@
   "package": "xyz.eclipseisoffline.randommod.mixin",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "AnvilScreenHandlerMixin",
+    "CreeperEntityMixin",
+    "EndCrystalEntityMixin",
+    "EnderDragonEntityMixin",
+    "EnderDragonSpawnStateSummoningPillarsMixin",
+    "EndSpikeFeatureMixin",
     "FarmlandBlockMixin",
     "FoodComponentsMixin",
     "GoatHornItemMixin",
+    "ItemEntityMixin",
+    "MendingEnchantmentMixin",
+    "MerchantEntityMixin",
     "PhantomEntityMixin",
+    "ProtectionEnchantmentMixin",
     "ServerPlayNetworkHandlerMixin",
+    "TridentEntityMixin",
     "WanderingTraderManagerMixin",
-    "WorldMixin"
+    "WitherSkullEntityMixin"
   ],
   "client": [],
   "injectors": {

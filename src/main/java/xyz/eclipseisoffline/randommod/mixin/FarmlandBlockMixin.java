@@ -15,7 +15,6 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(FarmlandBlock.class)
 public abstract class FarmlandBlockMixin {
 
-    /* Always */
     @Inject(method = "onLandedUpon", at = @At("HEAD"), cancellable = true)
     public void cancelSetToDirt(World world, BlockState state, BlockPos pos, Entity entity,
             float fallDistance, CallbackInfo callbackInfo) {
