@@ -1,6 +1,7 @@
 package xyz.eclipseisoffline.randommod.mixin;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.decoration.EndCrystalEntity;
 import net.minecraft.server.world.ServerWorld;
@@ -14,7 +15,11 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import xyz.eclipseisoffline.randommod.NoDestroyExplosionBehavior;
 
 @Mixin(EndCrystalEntity.class)
-public class EndCrystalEntityMixin {
+public abstract class EndCrystalEntityMixin extends Entity {
+
+    public EndCrystalEntityMixin(EntityType<?> type, World world) {
+        super(type, world);
+    }
 
     @Redirect(method = "damage", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;createExplosion(Lnet/minecraft/entity/Entity;Lnet/minecraft/entity/damage/DamageSource;Lnet/minecraft/world/explosion/ExplosionBehavior;DDDFZLnet/minecraft/world/World$ExplosionSourceType;)Lnet/minecraft/world/explosion/Explosion;"))
     public Explosion cancelExplosionInEnd(World instance, Entity entity, DamageSource damageSource,

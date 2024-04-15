@@ -1,9 +1,9 @@
 package xyz.eclipseisoffline.randommod.mixin;
 
+import net.minecraft.component.type.FoodComponent;
+import net.minecraft.component.type.FoodComponents;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.effect.StatusEffects;
-import net.minecraft.item.FoodComponent;
-import net.minecraft.item.FoodComponents;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
@@ -22,9 +22,12 @@ public class FoodComponentsMixin {
 
     @Inject(method = "<clinit>", at = @At("TAIL"))
     private static void modifyGlowBerries(CallbackInfo callbackInfo) {
-        GLOW_BERRIES = new FoodComponent.Builder().hunger(2)
-                .saturationModifier(0.1f).statusEffect(
-                        new StatusEffectInstance(StatusEffects.GLOWING, 300, 0, false, false, true),
-                        1.0F).build();
+        GLOW_BERRIES = new FoodComponent.Builder()
+                .nutrition(2)
+                .saturationModifier(0.1f)
+                .statusEffect(
+                        new StatusEffectInstance(StatusEffects.GLOWING, 300, 0,
+                                false, false, true), 1.0F)
+                .build();
     }
 }

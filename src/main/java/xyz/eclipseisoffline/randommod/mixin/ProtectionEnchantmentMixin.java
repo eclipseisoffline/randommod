@@ -8,7 +8,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(ProtectionEnchantment.class)
-public class ProtectionEnchantmentMixin {
+public abstract class ProtectionEnchantmentMixin extends Enchantment {
+
+    public ProtectionEnchantmentMixin(Properties properties) {
+        super(properties);
+    }
 
     @Inject(method = "canAccept", at = @At(value = "RETURN", ordinal = 1), cancellable = true)
     public void canAcceptOtherProtectionEnchantments(Enchantment other,

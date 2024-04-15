@@ -1,6 +1,8 @@
 package xyz.eclipseisoffline.randommod.mixin;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.projectile.ExplosiveProjectileEntity;
 import net.minecraft.entity.projectile.WitherSkullEntity;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.sound.SoundEvents;
@@ -13,7 +15,13 @@ import org.spongepowered.asm.mixin.injection.Redirect;
 import xyz.eclipseisoffline.randommod.NoDestroyExplosionBehavior;
 
 @Mixin(WitherSkullEntity.class)
-public class WitherSkullEntityMixin {
+public abstract class WitherSkullEntityMixin extends ExplosiveProjectileEntity {
+
+    protected WitherSkullEntityMixin(
+            EntityType<? extends ExplosiveProjectileEntity> entityType,
+            World world) {
+        super(entityType, world);
+    }
 
     @Redirect(method = "onCollision", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;createExplosion(Lnet/minecraft/entity/Entity;DDDFZLnet/minecraft/world/World$ExplosionSourceType;)Lnet/minecraft/world/explosion/Explosion;"))
     public Explosion cancelExplosion(World instance, Entity entity, double x, double y, double z,
