@@ -1,38 +1,38 @@
 package xyz.eclipseisoffline.randommod.mixin;
 
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
+import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.serialization.Codec;
-import net.minecraft.block.BlockState;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.random.Random;
-import net.minecraft.world.ModifiableWorld;
-import net.minecraft.world.ServerWorldAccess;
-import net.minecraft.world.gen.feature.EndSpikeFeature;
-import net.minecraft.world.gen.feature.EndSpikeFeature.Spike;
-import net.minecraft.world.gen.feature.EndSpikeFeatureConfig;
-import net.minecraft.world.gen.feature.Feature;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.LevelWriter;
+import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.level.levelgen.feature.Feature;
+import net.minecraft.world.level.levelgen.feature.FeaturePlaceContext;
+import net.minecraft.world.level.levelgen.feature.SpikeFeature;
+import net.minecraft.world.level.levelgen.feature.configurations.SpikeConfiguration;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-@Mixin(EndSpikeFeature.class)
-public abstract class EndSpikeFeatureMixin extends Feature<EndSpikeFeatureConfig> {
+@Mixin(SpikeFeature.class)
+public abstract class EndSpikeFeatureMixin extends Feature<SpikeConfiguration> {
 
-    public EndSpikeFeatureMixin(Codec<EndSpikeFeatureConfig> configCodec) {
+    public EndSpikeFeatureMixin(Codec<SpikeConfiguration> configCodec) {
         super(configCodec);
     }
 
-    @Redirect(method = "generateSpike", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/gen/feature/EndSpikeFeature;setBlockState(Lnet/minecraft/world/ModifiableWorld;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)V", ordinal = 0))
-    public void obsidianAirCheck(EndSpikeFeature instance, ModifiableWorld modifiableWorld,
-            BlockPos blockPos, BlockState blockState,
-            ServerWorldAccess world, Random random, EndSpikeFeatureConfig config, Spike spike) {
-        BlockState currentState = world.getBlockState(blockPos);
+    @WrapOperation(method = "place", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/levelgen/feature/SpikeFeature;setBlock(Lnet/minecraft/world/level/LevelWriter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)V", ordinal = 0))
+    public void obsidianAirCheck(SpikeFeature instance, LevelWriter levelWriter, BlockPos blockPos, BlockState state, Operation<Void> original,
+                                 @Local(argsOnly = true, name = "context") FeaturePlaceContext<SpikeConfiguration> context) {
+        BlockState currentState = context.level().getBlockState(blockPos);
         if (currentState.isAir()) {
-            setBlockState(modifiableWorld, blockPos, blockState);
+            original.call(instance, levelWriter, blockPos, state);
         }
     }
 
-    @Redirect(method = "generateSpike", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/gen/feature/EndSpikeFeature;setBlockState(Lnet/minecraft/world/ModifiableWorld;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/BlockState;)V", ordinal = 1))
-    public void cancelSetToAir(EndSpikeFeature instance, ModifiableWorld modifiableWorld,
+    @Redirect(method = "place", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/levelgen/feature/SpikeFeature;setBlock(Lnet/minecraft/world/level/LevelWriter;Lnet/minecraft/core/BlockPos;Lnet/minecraft/world/level/block/state/BlockState;)V", ordinal = 1))
+    public void cancelSetToAir(SpikeFeature instance, LevelWriter modifiableWorld,
             BlockPos blockPos, BlockState blockState) {
     }
 }

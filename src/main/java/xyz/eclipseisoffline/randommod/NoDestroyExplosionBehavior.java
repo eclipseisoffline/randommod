@@ -1,20 +1,20 @@
 package xyz.eclipseisoffline.randommod;
 
-import net.minecraft.block.BlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.world.BlockView;
-import net.minecraft.world.explosion.EntityExplosionBehavior;
-import net.minecraft.world.explosion.Explosion;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.EntityBasedExplosionDamageCalculator;
+import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.block.state.BlockState;
 
-public class NoDestroyExplosionBehavior extends EntityExplosionBehavior {
+public class NoDestroyExplosionBehavior extends EntityBasedExplosionDamageCalculator {
 
     public NoDestroyExplosionBehavior(Entity entity) {
         super(entity);
     }
 
     @Override
-    public boolean canDestroyBlock(Explosion explosion, BlockView world, BlockPos pos,
+    public boolean shouldBlockExplode(Explosion explosion, BlockGetter world, BlockPos pos,
             BlockState state, float power) {
         return false;
     }

@@ -1,32 +1,30 @@
 package xyz.eclipseisoffline.randommod.mixin;
 
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.projectile.ExplosiveProjectileEntity;
-import net.minecraft.entity.projectile.WitherSkullEntity;
-import net.minecraft.particle.ParticleTypes;
-import net.minecraft.sound.SoundEvents;
-import net.minecraft.world.World;
-import net.minecraft.world.World.ExplosionSourceType;
-import net.minecraft.world.explosion.Explosion;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.projectile.hurtingprojectile.AbstractHurtingProjectile;
+import net.minecraft.world.entity.projectile.hurtingprojectile.WitherSkull;
+import net.minecraft.world.level.Explosion;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.Level.ExplosionInteraction;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import xyz.eclipseisoffline.randommod.NoDestroyExplosionBehavior;
 
-@Mixin(WitherSkullEntity.class)
-public abstract class WitherSkullEntityMixin extends ExplosiveProjectileEntity {
+@Mixin(WitherSkull.class)
+public abstract class WitherSkullEntityMixin extends AbstractHurtingProjectile {
 
     protected WitherSkullEntityMixin(
-            EntityType<? extends ExplosiveProjectileEntity> entityType,
-            World world) {
+            EntityType<? extends AbstractHurtingProjectile> entityType,
+            Level world) {
         super(entityType, world);
     }
 
-    @Redirect(method = "onCollision", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;createExplosion(Lnet/minecraft/entity/Entity;DDDFZLnet/minecraft/world/World$ExplosionSourceType;)V"))
-    public void cancelExplosion(World instance, Entity entity, double x, double y, double z,
-                                float power, boolean createFire, ExplosionSourceType explosionSourceType) {
-        instance.createExplosion(entity, Explosion.createDamageSource(instance, entity),
+    @Redirect(method = "onHit", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;explode(Lnet/minecraft/world/entity/Entity;DDDFZLnet/minecraft/world/level/Level$ExplosionInteraction;)V"))
+    public void cancelExplosion(Level instance, Entity entity, double x, double y, double z,
+                                float power, boolean createFire, ExplosionInteraction explosionSourceType) {
+        instance.explode(entity, Explosion.getDefaultDamageSource(instance, entity),
                 new NoDestroyExplosionBehavior(entity), x, y, z,
                 power, false, explosionSourceType);
     }

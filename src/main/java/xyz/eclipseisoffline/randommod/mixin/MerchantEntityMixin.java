@@ -1,24 +1,23 @@
 package xyz.eclipseisoffline.randommod.mixin;
 
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.InventoryOwner;
-import net.minecraft.entity.Npc;
-import net.minecraft.entity.passive.MerchantEntity;
-import net.minecraft.entity.passive.PassiveEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.village.Merchant;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.AgeableMob;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.npc.InventoryCarrier;
+import net.minecraft.world.entity.npc.Npc;
+import net.minecraft.world.entity.npc.villager.AbstractVillager;
+import net.minecraft.world.item.trading.Merchant;
+import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(MerchantEntity.class)
-public abstract class MerchantEntityMixin extends PassiveEntity implements InventoryOwner, Npc,
+@Mixin(AbstractVillager.class)
+public abstract class MerchantEntityMixin extends AgeableMob implements InventoryCarrier, Npc,
         Merchant {
 
-    protected MerchantEntityMixin(EntityType<? extends PassiveEntity> entityType,
-            World world) {
+    protected MerchantEntityMixin(EntityType<? extends AgeableMob> entityType,
+            Level world) {
         super(entityType, world);
     }
 

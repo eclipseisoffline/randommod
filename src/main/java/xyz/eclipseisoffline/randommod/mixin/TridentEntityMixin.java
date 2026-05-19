@@ -1,24 +1,24 @@
 package xyz.eclipseisoffline.randommod.mixin;
 
-import net.minecraft.entity.EntityType;
-import net.minecraft.entity.projectile.PersistentProjectileEntity;
-import net.minecraft.entity.projectile.TridentEntity;
-import net.minecraft.world.World;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.projectile.arrow.AbstractArrow;
+import net.minecraft.world.entity.projectile.arrow.ThrownTrident;
+import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-@Mixin(TridentEntity.class)
-public abstract class TridentEntityMixin extends PersistentProjectileEntity {
+@Mixin(ThrownTrident.class)
+public abstract class TridentEntityMixin extends AbstractArrow {
 
     @Shadow
     private boolean dealtDamage;
 
-    protected TridentEntityMixin(EntityType<? extends PersistentProjectileEntity> entityType, World world) {
+    protected TridentEntityMixin(EntityType<? extends AbstractArrow> entityType, Level world) {
         super(entityType, world);
     }
 
     @Override
-    protected void tickInVoid() {
+    protected void onBelowWorld() {
         dealtDamage = true;
     }
 }

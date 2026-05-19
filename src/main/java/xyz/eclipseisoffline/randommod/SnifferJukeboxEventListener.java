@@ -1,12 +1,12 @@
 package xyz.eclipseisoffline.randommod;
 
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.event.GameEvent;
-import net.minecraft.world.event.PositionSource;
-import net.minecraft.world.event.listener.GameEventListener;
+import net.minecraft.core.BlockPos;
+import net.minecraft.core.Holder;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.gameevent.GameEvent;
+import net.minecraft.world.level.gameevent.GameEventListener;
+import net.minecraft.world.level.gameevent.PositionSource;
+import net.minecraft.world.phys.Vec3;
 
 public class SnifferJukeboxEventListener implements GameEventListener {
     private final PositionSource positionSource;
@@ -20,23 +20,23 @@ public class SnifferJukeboxEventListener implements GameEventListener {
     }
 
     @Override
-    public PositionSource getPositionSource() {
+    public PositionSource getListenerSource() {
         return this.positionSource;
     }
 
     @Override
-    public int getRange() {
+    public int getListenerRadius() {
         return this.range;
     }
 
     @Override
-    public boolean listen(ServerWorld world, RegistryEntry<GameEvent> event, GameEvent.Emitter emitter, Vec3d emitterPos) {
-        if (event.matches(GameEvent.JUKEBOX_PLAY)) {
-            jukeboxListener.randommod$updateJukeboxPos(BlockPos.ofFloored(emitterPos), true);
+    public boolean handleGameEvent(ServerLevel world, Holder<GameEvent> event, GameEvent.Context emitter, Vec3 emitterPos) {
+        if (event.is(GameEvent.JUKEBOX_PLAY)) {
+            jukeboxListener.randommod$updateJukeboxPos(BlockPos.containing(emitterPos), true);
             return true;
         }
-        if (event.matches(GameEvent.JUKEBOX_STOP_PLAY)) {
-            jukeboxListener.randommod$updateJukeboxPos(BlockPos.ofFloored(emitterPos), false);
+        if (event.is(GameEvent.JUKEBOX_STOP_PLAY)) {
+            jukeboxListener.randommod$updateJukeboxPos(BlockPos.containing(emitterPos), false);
             return true;
         }
         return false;

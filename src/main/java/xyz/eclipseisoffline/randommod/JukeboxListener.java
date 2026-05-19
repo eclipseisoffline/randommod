@@ -1,6 +1,6 @@
 package xyz.eclipseisoffline.randommod;
 
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.core.BlockPos;
 
 public interface JukeboxListener {
 

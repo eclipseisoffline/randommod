@@ -1,17 +1,17 @@
 package xyz.eclipseisoffline.randommod.mixin;
 
-import net.minecraft.entity.player.PlayerAbilities;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.player.PlayerInventory;
-import net.minecraft.inventory.Inventory;
-import net.minecraft.network.packet.s2c.play.PlayerAbilitiesS2CPacket;
-import net.minecraft.screen.AnvilScreenHandler;
-import net.minecraft.screen.ForgingScreenHandler;
-import net.minecraft.screen.Property;
-import net.minecraft.screen.ScreenHandlerContext;
-import net.minecraft.screen.ScreenHandlerType;
-import net.minecraft.screen.slot.ForgingSlotsManager;
-import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.network.protocol.game.ClientboundPlayerAbilitiesPacket;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.Container;
+import net.minecraft.world.entity.player.Abilities;
+import net.minecraft.world.entity.player.Inventory;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.inventory.AnvilMenu;
+import net.minecraft.world.inventory.ContainerLevelAccess;
+import net.minecraft.world.inventory.DataSlot;
+import net.minecraft.world.inventory.ItemCombinerMenu;
+import net.minecraft.world.inventory.ItemCombinerMenuSlotDefinition;
+import net.minecraft.world.inventory.MenuType;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -20,26 +20,26 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-@Mixin(AnvilScreenHandler.class)
-public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
+@Mixin(AnvilMenu.class)
+public abstract class AnvilScreenHandlerMixin extends ItemCombinerMenu {
 
     @Unique
     private static final int LEVEL_LIMIT = 1000;
 
     @Shadow
     @Final
-    private Property levelCost;
+    private DataSlot cost;
 
-    public AnvilScreenHandlerMixin(@Nullable ScreenHandlerType<?> type, int syncId, PlayerInventory playerInventory, ScreenHandlerContext context, ForgingSlotsManager forgingSlotsManager) {
+    public AnvilScreenHandlerMixin(@Nullable MenuType<?> type, int syncId, Inventory playerInventory, ContainerLevelAccess context, ItemCombinerMenuSlotDefinition forgingSlotsManager) {
         super(type, syncId, playerInventory, context, forgingSlotsManager);
     }
 
-    @Redirect(method = "updateResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/Property;set(I)V", ordinal = 6))
-    public void cancelSetLevelCost(Property instance, int i) {
+    @Redirect(method = "createResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/DataSlot;set(I)V", ordinal = 6))
+    public void cancelSetLevelCost(DataSlot instance, int i) {
     }
 
-    @Redirect(method = "updateResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/Property;get()I", ordinal = 1))
-    public int modifyLevelCostLimit(Property instance) {
+    @Redirect(method = "createResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/inventory/DataSlot;get()I", ordinal = 1))
+    public int modifyLevelCostLimit(DataSlot instance) {
         int levelCost = instance.get();
         if (levelCost >= 40 && levelCost < LEVEL_LIMIT) {
             levelCost = 39;
@@ -48,32 +48,32 @@ public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
     }
 
     @Override
-    public void onContentChanged(Inventory inventory) {
-        super.onContentChanged(inventory);
-        if (player instanceof ServerPlayerEntity) {
-            if (levelCost.get() >= LEVEL_LIMIT) {
-                ((ServerPlayerEntity) player).networkHandler.sendPacket(
-                        new PlayerAbilitiesS2CPacket(player.getAbilities()));
-            } else if (levelCost.get() >= 40) {
-                PlayerAbilities.Packed packedAbilities = player.getAbilities().pack();
-                PlayerAbilities tempAbilities = new PlayerAbilities();
-                tempAbilities.unpack(packedAbilities);
-                tempAbilities.creativeMode = true;
-                ((ServerPlayerEntity) player).networkHandler.sendPacket(
-                        new PlayerAbilitiesS2CPacket(tempAbilities));
+    public void slotsChanged(Container inventory) {
+        super.slotsChanged(inventory);
+        if (player instanceof ServerPlayer) {
+            if (cost.get() >= LEVEL_LIMIT) {
+                ((ServerPlayer) player).connection.send(
+                        new ClientboundPlayerAbilitiesPacket(player.getAbilities()));
+            } else if (cost.get() >= 40) {
+                Abilities.Packed packedAbilities = player.getAbilities().pack();
+                Abilities tempAbilities = new Abilities();
+                tempAbilities.apply(packedAbilities);
+                tempAbilities.instabuild = true;
+                ((ServerPlayer) player).connection.send(
+                        new ClientboundPlayerAbilitiesPacket(tempAbilities));
             } else {
-                ((ServerPlayerEntity) player).networkHandler.sendPacket(
-                        new PlayerAbilitiesS2CPacket(player.getAbilities()));
+                ((ServerPlayer) player).connection.send(
+                        new ClientboundPlayerAbilitiesPacket(player.getAbilities()));
             }
         }
     }
 
     @Override
-    public void onClosed(PlayerEntity player) {
-        super.onClosed(player);
-        if (player instanceof ServerPlayerEntity) {
-            ((ServerPlayerEntity) player).networkHandler.sendPacket(
-                    new PlayerAbilitiesS2CPacket(player.getAbilities()));
+    public void removed(Player player) {
+        super.removed(player);
+        if (player instanceof ServerPlayer) {
+            ((ServerPlayer) player).connection.send(
+                    new ClientboundPlayerAbilitiesPacket(player.getAbilities()));
         }
     }
 }

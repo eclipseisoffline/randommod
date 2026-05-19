@@ -2,12 +2,12 @@ package xyz.eclipseisoffline.randommod;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.minecraft.entity.EquipmentSlot;
-import net.minecraft.item.ItemStack;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.text.Text;
-import net.minecraft.util.Hand;
+import net.minecraft.commands.Commands;
+import net.minecraft.network.chat.Component;
+import net.minecraft.server.level.ServerPlayer;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.world.item.ItemStack;
 
 public class RandomMod implements ModInitializer {
 
@@ -15,30 +15,30 @@ public class RandomMod implements ModInitializer {
     public void onInitialize() {
         CommandRegistrationCallback.EVENT.register(
                 (dispatcher, registryAccess, environment) -> dispatcher.register(
-                        CommandManager.literal("head").executes(context -> {
-                            if (!context.getSource().isExecutedByPlayer()) {
+                        Commands.literal("head").executes(context -> {
+                            if (!context.getSource().isPlayer()) {
                                 return 1;
                             }
 
-                            ServerPlayerEntity player = context.getSource().getPlayer();
+                            ServerPlayer player = context.getSource().getPlayer();
                             assert player != null;
-                            ItemStack head = player.getEquippedStack(EquipmentSlot.HEAD);
+                            ItemStack head = player.getItemBySlot(EquipmentSlot.HEAD);
                             if (!head.isEmpty()) {
                                 context.getSource()
-                                        .sendError(Text.of("Empty your head slot first!"));
+                                        .sendFailure(Component.nullToEmpty("Empty your head slot first!"));
                                 return 1;
                             }
 
-                            if (player.getStackInHand(Hand.MAIN_HAND).isEmpty()) {
+                            if (player.getItemInHand(InteractionHand.MAIN_HAND).isEmpty()) {
                                 context.getSource()
-                                        .sendError(Text.of("Select an item by holding it!"));
+                                        .sendFailure(Component.nullToEmpty("Select an item by holding it!"));
                                 return 1;
                             }
 
-                            player.equipStack(EquipmentSlot.HEAD,
-                                    player.getStackInHand(Hand.MAIN_HAND).copyWithCount(1));
-                            if (!player.getAbilities().creativeMode) {
-                                player.getStackInHand(Hand.MAIN_HAND).decrement(1);
+                            player.setItemSlot(EquipmentSlot.HEAD,
+                                    player.getItemInHand(InteractionHand.MAIN_HAND).copyWithCount(1));
+                            if (!player.getAbilities().instabuild) {
+                                player.getItemInHand(InteractionHand.MAIN_HAND).shrink(1);
                             }
                             return 0;
                         })

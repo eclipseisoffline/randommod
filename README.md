@@ -21,4 +21,4 @@ Modifications:
 
 ## License
 
-This mod is licensed under GNU GPLv3.
+This mod is licensed under GNU LGPLv3.
