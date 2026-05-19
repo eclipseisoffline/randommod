@@ -4,13 +4,13 @@ import net.minecraft.entity.player.PlayerAbilities;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.PlayerInventory;
 import net.minecraft.inventory.Inventory;
-import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.packet.s2c.play.PlayerAbilitiesS2CPacket;
 import net.minecraft.screen.AnvilScreenHandler;
 import net.minecraft.screen.ForgingScreenHandler;
 import net.minecraft.screen.Property;
 import net.minecraft.screen.ScreenHandlerContext;
 import net.minecraft.screen.ScreenHandlerType;
+import net.minecraft.screen.slot.ForgingSlotsManager;
 import net.minecraft.server.network.ServerPlayerEntity;
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
@@ -30,11 +30,8 @@ public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
     @Final
     private Property levelCost;
 
-    public AnvilScreenHandlerMixin(
-            @Nullable ScreenHandlerType<?> type,
-            int syncId, PlayerInventory playerInventory,
-            ScreenHandlerContext context) {
-        super(type, syncId, playerInventory, context);
+    public AnvilScreenHandlerMixin(@Nullable ScreenHandlerType<?> type, int syncId, PlayerInventory playerInventory, ScreenHandlerContext context, ForgingSlotsManager forgingSlotsManager) {
+        super(type, syncId, playerInventory, context, forgingSlotsManager);
     }
 
     @Redirect(method = "updateResult", at = @At(value = "INVOKE", target = "Lnet/minecraft/screen/Property;set(I)V", ordinal = 6))
@@ -58,10 +55,9 @@ public abstract class AnvilScreenHandlerMixin extends ForgingScreenHandler {
                 ((ServerPlayerEntity) player).networkHandler.sendPacket(
                         new PlayerAbilitiesS2CPacket(player.getAbilities()));
             } else if (levelCost.get() >= 40) {
-                NbtCompound abilityCompound = new NbtCompound();
-                player.getAbilities().writeNbt(abilityCompound);
+                PlayerAbilities.Packed packedAbilities = player.getAbilities().pack();
                 PlayerAbilities tempAbilities = new PlayerAbilities();
-                tempAbilities.readNbt(abilityCompound);
+                tempAbilities.unpack(packedAbilities);
                 tempAbilities.creativeMode = true;
                 ((ServerPlayerEntity) player).networkHandler.sendPacket(
                         new PlayerAbilitiesS2CPacket(tempAbilities));

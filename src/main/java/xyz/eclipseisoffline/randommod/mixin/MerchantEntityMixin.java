@@ -22,9 +22,8 @@ public abstract class MerchantEntityMixin extends PassiveEntity implements Inven
         super(entityType, world);
     }
 
-    @Inject(method = "canBeLeashedBy", at = @At("HEAD"), cancellable = true)
-    public void canLeash(PlayerEntity player,
-            CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
+    @Inject(method = "canBeLeashed", at = @At("HEAD"), cancellable = true)
+    public void canLeash(CallbackInfoReturnable<Boolean> callbackInfoReturnable) {
         callbackInfoReturnable.setReturnValue(true);
     }
 }

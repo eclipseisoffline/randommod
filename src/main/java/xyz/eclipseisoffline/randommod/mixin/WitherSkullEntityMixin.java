@@ -23,13 +23,11 @@ public abstract class WitherSkullEntityMixin extends ExplosiveProjectileEntity {
         super(entityType, world);
     }
 
-    @Redirect(method = "onCollision", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;createExplosion(Lnet/minecraft/entity/Entity;DDDFZLnet/minecraft/world/World$ExplosionSourceType;)Lnet/minecraft/world/explosion/Explosion;"))
-    public Explosion cancelExplosion(World instance, Entity entity, double x, double y, double z,
-            float power, boolean createFire, ExplosionSourceType explosionSourceType) {
-        return instance.createExplosion(entity, Explosion.createDamageSource(instance, entity),
+    @Redirect(method = "onCollision", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/World;createExplosion(Lnet/minecraft/entity/Entity;DDDFZLnet/minecraft/world/World$ExplosionSourceType;)V"))
+    public void cancelExplosion(World instance, Entity entity, double x, double y, double z,
+                                float power, boolean createFire, ExplosionSourceType explosionSourceType) {
+        instance.createExplosion(entity, Explosion.createDamageSource(instance, entity),
                 new NoDestroyExplosionBehavior(entity), x, y, z,
-                power, false, explosionSourceType,
-                ParticleTypes.EXPLOSION, ParticleTypes.EXPLOSION_EMITTER,
-                SoundEvents.ENTITY_GENERIC_EXPLODE);
+                power, false, explosionSourceType);
     }
 }

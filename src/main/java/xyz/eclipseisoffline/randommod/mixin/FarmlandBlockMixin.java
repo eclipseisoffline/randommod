@@ -19,8 +19,7 @@ public abstract class FarmlandBlockMixin extends Block {
     }
 
     @Inject(method = "onLandedUpon", at = @At("HEAD"), cancellable = true)
-    public void cancelSetToDirt(World world, BlockState state, BlockPos pos, Entity entity,
-            float fallDistance, CallbackInfo callbackInfo) {
+    public void cancelSetToDirt(World world, BlockState state, BlockPos pos, Entity entity, double fallDistance, CallbackInfo callbackInfo) {
         callbackInfo.cancel();
     }
 }
