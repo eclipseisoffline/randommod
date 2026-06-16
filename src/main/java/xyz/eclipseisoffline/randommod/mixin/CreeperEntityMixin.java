@@ -21,7 +21,7 @@ public abstract class CreeperEntityMixin extends Monster {
         super(entityType, world);
     }
 
-    @Redirect(method = "explodeCreeper", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;createExplosion(Lnet/minecraft/world/entity/Entity;DDDFLnet/minecraft/world/level/Level$ExplosionInteraction;)V"))
+    @Redirect(method = "explodeCreeper", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;explode(Lnet/minecraft/world/entity/Entity;DDDFLnet/minecraft/world/level/Level$ExplosionInteraction;)V"))
     public void setExplosionBehavior(ServerLevel instance, Entity entity, double x, double y, double z, float power, ExplosionInteraction explosionSourceType) {
         instance.explode(this, Explosion.getDefaultDamageSource(instance, entity), new NoDestroyExplosionBehavior(entity), this.getX(), this.getY(), this.getZ(),
                 power, false, explosionSourceType);

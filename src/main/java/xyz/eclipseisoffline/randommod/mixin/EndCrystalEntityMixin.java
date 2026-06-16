@@ -20,7 +20,7 @@ public abstract class EndCrystalEntityMixin extends Entity {
         super(type, world);
     }
 
-    @Redirect(method = "hurtServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;createExplosion(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/damagesource/DamageSource;Lnet/minecraft/world/level/ExplosionDamageCalculator;DDDFZLnet/minecraft/world/level/Level$ExplosionInteraction;)V"))
+    @Redirect(method = "hurtServer", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;explode(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/damagesource/DamageSource;Lnet/minecraft/world/level/ExplosionDamageCalculator;DDDFZLnet/minecraft/world/level/Level$ExplosionInteraction;)V"))
     public void cancelExplosionInEnd(ServerLevel instance, Entity entity, DamageSource damageSource, ExplosionDamageCalculator behavior,
                                      double x, double y, double z, float power, boolean fire, ExplosionInteraction explosionSourceType) {
         ExplosionDamageCalculator explosionBehavior = behavior;

@@ -9,6 +9,8 @@
     "EndCrystalEntityMixin",
     "EnderDragonEntityMixin",
     "EnderDragonSpawnStateSummoningPillarsMixin",
+    "EnderEyeItemMixin",
+    "EndPortalBlockMixin",
     "EndSpikeFeatureMixin",
     "FarmlandBlockMixin",
     "ItemEntityMixin",

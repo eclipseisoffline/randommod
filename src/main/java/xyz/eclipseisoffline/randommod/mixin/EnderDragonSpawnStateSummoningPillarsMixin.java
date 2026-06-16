@@ -7,10 +7,10 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-@Mixin(targets = "net.minecraft.world.level.dimension.end.DragonRespawnAnimation$3")
+@Mixin(targets = "net.minecraft.world.level.dimension.end.DragonRespawnStage$3")
 public abstract class EnderDragonSpawnStateSummoningPillarsMixin {
 
-    @Redirect(method = "run", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;createExplosion(Lnet/minecraft/world/entity/Entity;DDDFLnet/minecraft/world/level/Level$ExplosionInteraction;)V"))
+    @Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/server/level/ServerLevel;explode(Lnet/minecraft/world/entity/Entity;DDDFLnet/minecraft/world/level/Level$ExplosionInteraction;)V"))
     public void cancelExplosion(ServerLevel instance, Entity entity, double x, double y, double z,
                                 float power, ExplosionInteraction explosionSourceType) {}
 }
